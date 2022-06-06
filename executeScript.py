@@ -12,53 +12,38 @@ def Average(lst):
     return sum(lst) / len(lst)
 
 h_obj_iri = []
-h_obj_lit = []
-h_pred = []
+h_obj_literals = []
+h_predicates = []
 
 
+"""
+Counts the number of distinct predicates, object IRIs, and object Literals from the database.
+"""
+def get_props_average(namespace):
+    server_url = "http://localhost:9999/blazegraph/namespace/" + namespace + "/sparql"
+    server = sparql.SPARQLServer(server_url)
+    q = "Select (count(*) as ?count) where {?s ?p ?o. FILTER(isIRI(?o))}"
+    result = server.query(q)
+    for res in result['results']['bindings']:
+        h_obj_iri.append(int(res['count']['value']))
 
-# def get_props_average(namespace):
-#     server_url = "http://localhost:9999/blazegraph/namespace/" + namespace + "/sparql"
-#     server = sparql.SPARQLServer(server_url)
-#     q = "Select (count(*) as ?count) where {?s ?p ?o. FILTER(isIRI(?o))}"
-#     result = server.query(q)
-#     for res in result['results']['bindings']:
-#         h_obj_iri.append(int(res['count']['value']))
-#
-#     q = "Select (count(*) as ?count) where {?s ?p ?o. FILTER(isLiteral(?o))}"
-#     result = server.query(q)
-#     for res in result['results']['bindings']:
-#         h_obj_lit.append(int(res['count']['value']))
-#
-#     q = "Select (count(distinct ?p) as ?count) where {?s ?p ?o.}"
-#     result = server.query(q)
-#     for res in result['results']['bindings']:
-#         h_pred.append(int(res['count']['value']))
-#
-#
-#
-# print("history s2: ")
-#
-# h_obj_iri = []
-# h_obj_lit = []
-# h_pred = []
-#
+    q = "Select (count(*) as ?count) where {?s ?p ?o. FILTER(isLiteral(?o))}"
+    result = server.query(q)
+    for res in result['results']['bindings']:
+        h_obj_lit.append(int(res['count']['value']))
+
+    q = "Select (count(distinct ?p) as ?count) where {?s ?p ?o.}"
+    result = server.query(q)
+    for res in result['results']['bindings']:
+        h_predicates.append(int(res['count']['value']))
+
+
 # get_props_average("v2s2h0")
-# get_props_average("v2s2h1")
-# get_props_average("v2s2h2")
-# get_props_average("v2s2h3")
-# get_props_average("v2s2h4")
-# get_props_average("v2s2h5")
-# get_props_average("v2s2h6")
-# get_props_average("v2s2h7")
-# get_props_average("v2s2h8")
-# get_props_average("v2s2h9")
-#
-#
+
+
 # avg_iri_s10 = Average(h_obj_iri)
 # avg_lit_s10 = Average(h_obj_lit)
 # avg_pred_s10 = Average(h_pred)
-#
 #
 # print("Predicates: " + str(Average(h_pred)))
 # print("literals: " + str(avg_lit_s10/(avg_lit_s10 + avg_iri_s10)))
